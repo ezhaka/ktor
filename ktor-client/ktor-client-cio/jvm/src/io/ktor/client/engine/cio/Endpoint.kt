@@ -93,7 +93,8 @@ internal class Endpoint(
         val (request, response, callContext) = task
         try {
             val connection = connect(request.attributes)
-            val input = connection.openReadChannel().withSocketTimeoutExceptionMapping()
+            val input = mapEngineExceptions(connection.openReadChannel())
+//            val input = connection.openReadChannel().withSocketTimeoutExceptionMapping()
             val output = connection.openWriteChannel()
             val requestTime = GMTDate()
 
@@ -254,13 +255,15 @@ class FailToConnectException : Exception("Connect timed out or retry attempts ex
  * Returns [ByteReadChannel] with [ByteChannel.close] handler that returns [HttpSocketTimeoutException] instead of
  * [SocketTimeoutException].
  */
-@InternalAPI
-private fun ByteReadChannel.withSocketTimeoutExceptionMapping(): ByteReadChannel =
-    withCloseHandler { cause, rootCause, close ->
-        close(
-            when (rootCause) {
-                is SocketTimeoutException -> HttpSocketTimeoutException()
-                else -> cause
-            }
-        )
+private fun CoroutineScope.mapEngineExceptions(input: ByteReadChannel): ByteReadChannel = writer {
+    try {
+        input.joinTo(channel, false)
+    } catch (cause: Throwable) {
+        val mappedCause = when (cause.rootCause) {
+            is SocketTimeoutException -> HttpSocketTimeoutException()
+            else -> cause
+        }
+
+        channel.close(mappedCause)
     }
+}.channel

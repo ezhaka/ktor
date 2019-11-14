@@ -11,6 +11,7 @@ import io.ktor.util.cio.*
 import io.ktor.utils.io.*
 import io.ktor.utils.io.jvm.javaio.*
 import kotlinx.coroutines.*
+import kotlinx.coroutines.channels.*
 import java.io.*
 import java.net.*
 import kotlin.coroutines.*
@@ -60,26 +61,31 @@ internal suspend fun HttpURLConnection.timeoutAwareConnect() {
     }
 }
 
-internal fun HttpURLConnection.content(callScope: CoroutineContext): ByteReadChannel = try {
+internal fun HttpURLConnection.content(callScope: CoroutineScope): ByteReadChannel = try {
     inputStream?.buffered()
 } catch (_: IOException) {
     errorStream?.buffered()
 }?.toByteReadChannel(
-    context = callScope,
+    context = callScope.coroutineContext,
     pool = KtorDefaultPool
-)?.withSocketTimeoutExceptionMapping() ?: ByteReadChannel.Empty
+)?.let { callScope.mapEngineExceptions(it) } ?: ByteReadChannel.Empty
 
 /**
  * Returns [ByteReadChannel] with [ByteChannel.close] handler that returns [HttpSocketTimeoutException] instead of
  * [SocketTimeoutException].
  */
-@InternalAPI
-private fun ByteReadChannel.withSocketTimeoutExceptionMapping(): ByteReadChannel =
-    withCloseHandler { cause, rootCause, close ->
-        close(
-            when (rootCause) {
-                is SocketTimeoutException -> HttpSocketTimeoutException()
-                else -> cause
-            }
-        )
+private fun CoroutineScope.mapEngineExceptions(input: ByteReadChannel): ByteReadChannel = writer {
+    try {
+        input.joinTo(channel, false)
+        try {
+            input.readByte() // TODO: by some reason we don't get a timeout exception in joinTo()
+        } catch (_: ClosedReceiveChannelException) {}
+    } catch (cause: Throwable) {
+        val mappedCause = when (cause.rootCause) {
+            is SocketTimeoutException -> HttpSocketTimeoutException()
+            else -> cause
+        }
+
+        channel.close(mappedCause)
     }
+}.channel
