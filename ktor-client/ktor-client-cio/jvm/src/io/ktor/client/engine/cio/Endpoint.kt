@@ -215,11 +215,11 @@ internal class Endpoint(
      * connect timeout and socket timeout to be applied.
      */
     private fun retrieveTimeouts(attributes: Attributes?): Pair<Long, Long> {
-        if (attributes == null || !attributes.contains(HttpTimeout.Configuration.key)) {
+        if (attributes == null || attributes.getExtension(HttpTimeout.Configuration.Extension) == null) {
             return config.endpoint.connectTimeout to config.endpoint.connectTimeout
         }
 
-        return attributes[HttpTimeout.Configuration.key].let { timeoutAttributes ->
+        return attributes.getExtension(HttpTimeout.Configuration.Extension)!!.let { timeoutAttributes ->
             val socketTimeout = timeoutAttributes.socketTimeout ?: config.endpoint.socketTimeout
             val connectTimeout = timeoutAttributes.connectTimeout ?: config.endpoint.connectTimeout
             return connectTimeout to socketTimeout

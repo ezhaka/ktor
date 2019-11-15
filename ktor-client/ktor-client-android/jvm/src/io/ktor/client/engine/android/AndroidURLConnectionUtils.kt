@@ -21,7 +21,7 @@ import kotlin.coroutines.*
  * introduced by [HttpTimeout] client feature.
  */
 internal fun HttpURLConnection.setupTimeoutAttributes(attributes: Attributes) {
-    attributes.getOrNull(HttpTimeout.Configuration.key)?.let { timeoutAttributes ->
+    attributes.getExtension(HttpTimeout.Configuration.Extension)?.let { timeoutAttributes ->
         timeoutAttributes.connectTimeout?.let { connectTimeout = it.toInt() }
         timeoutAttributes.socketTimeout?.let { readTimeout = it.toInt() }
         setupRequestTimeoutAttributes(timeoutAttributes)
