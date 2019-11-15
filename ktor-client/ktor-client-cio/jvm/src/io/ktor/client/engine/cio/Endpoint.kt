@@ -6,7 +6,6 @@ package io.ktor.client.engine.cio
 
 import io.ktor.client.features.*
 import io.ktor.client.request.*
-import io.ktor.client.utils.*
 import io.ktor.network.sockets.*
 import io.ktor.network.sockets.Socket
 import io.ktor.network.tls.*
@@ -19,7 +18,6 @@ import kotlinx.coroutines.*
 import kotlinx.coroutines.channels.Channel
 import java.io.*
 import java.net.*
-import java.net.SocketTimeoutException
 import java.nio.channels.*
 import kotlin.coroutines.*
 
@@ -250,20 +248,3 @@ open class ConnectException : Exception("Connect timed out or retry attempts exc
 @Suppress("KDocMissingDocumentation")
 @KtorExperimentalAPI
 class FailToConnectException : Exception("Connect timed out or retry attempts exceeded")
-
-/**
- * Returns [ByteReadChannel] with [ByteChannel.close] handler that returns [HttpSocketTimeoutException] instead of
- * [SocketTimeoutException].
- */
-private fun CoroutineScope.mapEngineExceptions(input: ByteReadChannel): ByteReadChannel = writer {
-    try {
-        input.joinTo(channel, false)
-    } catch (cause: Throwable) {
-        val mappedCause = when (cause.rootCause) {
-            is SocketTimeoutException -> HttpSocketTimeoutException()
-            else -> cause
-        }
-
-        channel.close(mappedCause)
-    }
-}.channel
