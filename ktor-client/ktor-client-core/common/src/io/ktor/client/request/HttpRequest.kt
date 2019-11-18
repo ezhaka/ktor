@@ -109,7 +109,7 @@ class HttpRequestBuilder : HttpMessageBuilder {
     fun build(): HttpRequestData = HttpRequestData(
         url.build(), method, headers.build(),
         body as? OutgoingContent ?: error("No request transformation found: $body"),
-        executionContext!!, attributes, extensions
+        executionContext, attributes, extensions
     )
 
     /**
@@ -145,7 +145,7 @@ class HttpRequestBuilder : HttpMessageBuilder {
      */
     @KtorExperimentalAPI
     @UseExperimental(ExperimentalStdlibApi::class)
-    inline fun <reified T : HttpRequestExtension> addExtension(extension: T) {
+    inline fun <reified T : HttpRequestExtension> setExtension(extension: T) {
         extensions[typeOf<T>()] = extension
     }
 
@@ -154,7 +154,7 @@ class HttpRequestBuilder : HttpMessageBuilder {
      */
     @KtorExperimentalAPI
     @UseExperimental(ExperimentalStdlibApi::class)
-    inline fun <reified T : HttpRequestExtension> getExtension(): T? {
+    inline fun <reified T : HttpRequestExtension> getExtensionOrNull(): T? {
         return extensions[typeOf<T>()] as T?
     }
 

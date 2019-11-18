@@ -52,10 +52,10 @@ class HttpTimeout(
         @UseExperimental(InternalCoroutinesApi::class)
         override fun install(feature: HttpTimeout, scope: HttpClient) {
             scope.requestPipeline.intercept(HttpRequestPipeline.Before) {
-                var configuration = context.getExtension<Configuration>()
+                var configuration = context.getExtensionOrNull<Configuration>()
                 if (configuration == null && feature.hasNotNullTimeouts()) {
                     configuration = Configuration()
-                    context.addExtension(configuration)
+                    context.setExtension(configuration)
                 }
 
                 configuration?.apply {
