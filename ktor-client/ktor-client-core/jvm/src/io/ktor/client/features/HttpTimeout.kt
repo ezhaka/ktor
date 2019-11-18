@@ -24,8 +24,12 @@ fun CoroutineScope.mapEngineExceptions(input: ByteReadChannel): ByteReadChannel 
     val replacementChannel = ByteChannel()
     val wrapper = ByteChannelWrapper(replacementChannel)
 
-    launch {
-        input.joinTo(wrapper, true)
+    GlobalScope.launch {
+        try {
+            input.joinTo(wrapper, true)
+        } catch (cause: Throwable) {
+            input.cancel(cause)
+        }
     }
 
     return replacementChannel
