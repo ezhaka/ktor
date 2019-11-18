@@ -20,6 +20,7 @@ import java.io.*
 import java.net.*
 import java.nio.channels.*
 import kotlin.coroutines.*
+import kotlin.system.*
 
 internal class Endpoint(
     private val host: String,
@@ -91,10 +92,19 @@ internal class Endpoint(
         val (request, response, callContext) = task
         try {
             val connection = connect(request.attributes)
-            val input = mapEngineExceptions(connection.openReadChannel())
-//            val input = connection.openReadChannel().withSocketTimeoutExceptionMapping()
-            val output = connection.openWriteChannel()
+            val input = this@Endpoint.mapEngineExceptions(connection.openReadChannel())
+            val output = this@Endpoint.mapEngineExceptions(connection.openWriteChannel())
             val requestTime = GMTDate()
+
+            callContext[Job]!!.invokeOnCompletion { cause ->
+                try {
+                    input.cancel(cause)
+                    output.close(cause)
+                    connection.close()
+                    releaseConnection()
+                } catch (_: Throwable) {
+                }
+            }
 
             val timeout = config.requestTimeout
             val responseData = if (timeout == 0L) {
@@ -104,16 +114,6 @@ internal class Endpoint(
                 withTimeout(timeout) {
                     request.write(output, callContext, overProxy)
                     readResponse(requestTime, request, input, output, callContext)
-                }
-            }
-
-            callContext[Job]!!.invokeOnCompletion { cause ->
-                try {
-                    input.cancel(cause)
-                    output.close(cause)
-                    connection.close()
-                    releaseConnection()
-                } catch (_: Throwable) {
                 }
             }
 

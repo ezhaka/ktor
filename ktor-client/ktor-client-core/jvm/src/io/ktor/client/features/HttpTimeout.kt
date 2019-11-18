@@ -21,15 +21,34 @@ actual class HttpSocketTimeoutException : SocketTimeoutException("Socket timeout
  */
 @InternalAPI
 fun CoroutineScope.mapEngineExceptions(input: ByteReadChannel): ByteReadChannel {
-    val res = ByteChannel()
-    val wrapper = ByteChannelWrapper(res)
+    val replacementChannel = ByteChannel()
+    val wrapper = ByteChannelWrapper(replacementChannel)
 
-    // TODO: if we launch on the current scope we hung.
-    GlobalScope.launch {
+    launch {
         input.joinTo(wrapper, true)
     }
 
-    return res
+    return replacementChannel
+}
+
+/**
+ * Returns [ByteWriteChannel] with [ByteChannel.close] handler that returns [HttpSocketTimeoutException] instead of
+ * [SocketTimeoutException].
+ */
+@InternalAPI
+fun CoroutineScope.mapEngineExceptions(input: ByteWriteChannel): ByteWriteChannel {
+    val replacementChannel = ByteChannel()
+    val wrapper = ByteChannelWrapper(replacementChannel)
+
+    launch {
+        try {
+            wrapper.joinTo(input, true)
+        } catch (cause: Throwable) {
+            wrapper.close(cause)
+        }
+    }
+
+    return wrapper
 }
 
 private class ByteChannelWrapper(private val delegate: ByteChannel) : ByteChannel by delegate {
