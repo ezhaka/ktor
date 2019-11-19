@@ -89,7 +89,7 @@ class HttpTimeoutTest : ClientLoader() {
     }
 
     @Test
-    fun getRequestTimeoutWithSeparateReceiveTest() = clientTests(listOf("Curl", "Ios")) {
+    fun getRequestTimeoutWithSeparateReceiveTest() = clientTests(listOf("Curl", "Ios", "Js")) {
         config {
             install(HttpTimeout) { requestTimeout = 1000 }
         }
@@ -105,7 +105,7 @@ class HttpTimeoutTest : ClientLoader() {
     }
 
     @Test
-    fun getRequestTimeoutWithSeparateReceivePerRequestAttributesTest() = clientTests(listOf("Curl", "Ios")) {
+    fun getRequestTimeoutWithSeparateReceivePerRequestAttributesTest() = clientTests(listOf("Curl", "Ios", "Js")) {
         config {
             install(HttpTimeout)
         }
