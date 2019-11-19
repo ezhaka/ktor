@@ -5,6 +5,7 @@
 package io.ktor.client.tests
 
 import io.ktor.client.*
+import io.ktor.client.features.*
 import io.ktor.client.request.*
 import io.ktor.client.tests.utils.*
 import io.ktor.http.content.*
@@ -33,6 +34,7 @@ class PostTest : ClientLoader() {
             val content = makeString(16 * 1024 * 1024)
 
             val response = client.post<String>("$TEST_SERVER/content/echo") {
+                setExtension(HttpTimeout.Extension.key, HttpTimeout.Extension(socketTimeout = 5000))
                 body = object : OutgoingContent.WriteChannelContent() {
                     override suspend fun writeTo(channel: ByteWriteChannel) {
                         channel.writeStringUtf8(content)
