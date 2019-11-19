@@ -36,7 +36,6 @@ internal fun CoroutineScope.attachForWritingImpl(
                 while (buffer.hasRemaining()) {
                     var rc: Int
 
-                    println("Writer timeout: ${socketOptions?.socketTimeout ?: 0}")
                     withSocketTimeout(socketOptions?.socketTimeout ?: 0) {
                         do {
                             rc = nioChannel.write(buffer)
@@ -84,7 +83,6 @@ internal fun CoroutineScope.attachForWritingDirectImpl(
                 while (buffer.hasRemaining()) {
                     var rc = 0
 
-                    println("Writer timeout: ${socketOptions?.socketTimeout ?: 0}")
                     withSocketTimeout(socketOptions?.socketTimeout ?: 0) {
                         do {
                             rc = nioChannel.write(buffer)
