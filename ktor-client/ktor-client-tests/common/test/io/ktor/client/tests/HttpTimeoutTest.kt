@@ -12,9 +12,23 @@ import io.ktor.client.tests.utils.*
 import io.ktor.http.*
 import io.ktor.utils.io.*
 import io.ktor.utils.io.core.*
+import kotlinx.coroutines.*
 import kotlin.test.*
 
 private const val TEST_URL = "$TEST_SERVER/timeout"
+
+/**
+ * Utils function returning all active jobs in the hierarchy.
+ */
+private fun Job.getActiveChildren(): Sequence<Job> = sequence {
+    for (child in children) {
+        if (child.isActive) {
+            yield(child)
+        }
+
+        yieldAll(child.getActiveChildren())
+    }
+}
 
 class HttpTimeoutTest : ClientLoader() {
     @Test
@@ -28,6 +42,78 @@ class HttpTimeoutTest : ClientLoader() {
                 parameter("delay", 10)
             }
             assertEquals("Text", response)
+        }
+    }
+
+    @Test
+    fun testWithExternalTimeout() = clientTests {
+        config {
+            install(HttpTimeout)
+        }
+
+        test { client ->
+            val requestBuilder = HttpRequestBuilder().apply {
+                method = HttpMethod.Get
+                url("$TEST_URL/with-delay")
+                parameter("delay", 60 * 1000)
+            }
+
+            assertFailsWith<TimeoutCancellationException> {
+                withTimeout(500) {
+                    client.request<String>(requestBuilder)
+                }
+            }
+
+            assertTrue { requestBuilder.executionContext.getActiveChildren().none() }
+        }
+    }
+
+    @Test
+    fun testHead() = clientTests {
+        config {
+            install(HttpTimeout)
+        }
+
+        test { client ->
+            val response = client.head<HttpResponse>("$TEST_URL/with-delay?delay=10")
+            assertEquals(HttpStatusCode.OK, response.status)
+        }
+    }
+
+    @Test
+    fun testHeadWithTimeout() = clientTests {
+        config {
+            install(HttpTimeout) {
+                requestTimeout = 500
+            }
+        }
+
+        test { client ->
+            assertFailsWithRootCause<HttpRequestTimeoutException> {
+                client.head<HttpResponse>("$TEST_URL/with-delay?delay=1000")
+            }
+        }
+    }
+
+    @Test
+    fun testGetWithCancellation() = clientTests {
+        config {
+            install(HttpTimeout) {
+                requestTimeout = 500
+            }
+
+            test { client ->
+                val requestBuilder = HttpRequestBuilder().apply {
+                    method = HttpMethod.Get
+                    url("$TEST_URL/with-stream")
+                    parameter("delay", 2000)
+                }
+
+                client.request<ByteReadChannel>(requestBuilder).cancel()
+
+                delay(500) // Channel is closing asynchronously.
+                assertTrue { requestBuilder.executionContext.getActiveChildren().none() }
+            }
         }
     }
 
