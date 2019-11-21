@@ -163,9 +163,9 @@ class HttpTimeoutTest : ClientLoader() {
                 method = HttpMethod.Get
                 parameter("delay", 10)
             }
-            val res: String = response.receive()
+            val result: String = response.receive()
 
-            assertEquals("Text", res)
+            assertEquals("Text", result)
         }
     }
 
@@ -185,9 +185,9 @@ class HttpTimeoutTest : ClientLoader() {
                     HttpTimeout.HttpTimeoutExtension(requestTimeout = 500)
                 )
             }
-            val res: String = response.receive()
+            val result: String = response.receive()
 
-            assertEquals("Text", res)
+            assertEquals("Text", result)
         }
     }
 
