@@ -58,12 +58,13 @@ class HttpTimeoutTest : ClientLoader() {
                 parameter("delay", 60 * 1000)
             }
 
-            assertFailsWith<TimeoutCancellationException> {
+            val exception = assertFails {
                 withTimeout(500) {
                     client.request<String>(requestBuilder)
                 }
             }
 
+            assertTrue { exception is TimeoutCancellationException }
             assertTrue { requestBuilder.executionContext.getActiveChildren().none() }
         }
     }
