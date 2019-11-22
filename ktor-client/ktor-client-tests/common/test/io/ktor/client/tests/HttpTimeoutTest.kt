@@ -34,7 +34,7 @@ class HttpTimeoutTest : ClientLoader() {
     @Test
     fun testGet() = clientTests {
         config {
-            install(HttpTimeout) { requestTimeout = 500 }
+            install(HttpTimeout) { requestTimeoutMillis = 500 }
         }
 
         test { client ->
@@ -85,7 +85,7 @@ class HttpTimeoutTest : ClientLoader() {
     fun testHeadWithTimeout() = clientTests {
         config {
             install(HttpTimeout) {
-                requestTimeout = 500
+                requestTimeoutMillis = 500
             }
         }
 
@@ -100,7 +100,7 @@ class HttpTimeoutTest : ClientLoader() {
     fun testGetWithCancellation() = clientTests {
         config {
             install(HttpTimeout) {
-                requestTimeout = 500
+                requestTimeoutMillis = 500
             }
 
             test { client ->
@@ -121,7 +121,7 @@ class HttpTimeoutTest : ClientLoader() {
     @Test
     fun testGetRequestTimeout() = clientTests {
         config {
-            install(HttpTimeout) { requestTimeout = 10 }
+            install(HttpTimeout) { requestTimeoutMillis = 10 }
         }
 
         test { client ->
@@ -146,7 +146,7 @@ class HttpTimeoutTest : ClientLoader() {
 
                     setExtension(
                         HttpTimeout.HttpTimeoutExtension.key,
-                        HttpTimeout.HttpTimeoutExtension(requestTimeout = 10)
+                        HttpTimeout.HttpTimeoutExtension(requestTimeoutMillis = 10)
                     )
                 }
             }
@@ -156,7 +156,7 @@ class HttpTimeoutTest : ClientLoader() {
     @Test
     fun testGetWithSeparateReceive() = clientTests {
         config {
-            install(HttpTimeout) { requestTimeout = 500 }
+            install(HttpTimeout) { requestTimeoutMillis = 500 }
         }
 
         test { client ->
@@ -183,7 +183,7 @@ class HttpTimeoutTest : ClientLoader() {
 
                 setExtension(
                     HttpTimeout.HttpTimeoutExtension.key,
-                    HttpTimeout.HttpTimeoutExtension(requestTimeout = 500)
+                    HttpTimeout.HttpTimeoutExtension(requestTimeoutMillis = 500)
                 )
             }
             val result: String = response.receive()
@@ -195,7 +195,7 @@ class HttpTimeoutTest : ClientLoader() {
     @Test
     fun testGetRequestTimeoutWithSeparateReceive() = clientTests(listOf("Curl", "Ios", "Js")) {
         config {
-            install(HttpTimeout) { requestTimeout = 1000 }
+            install(HttpTimeout) { requestTimeoutMillis = 1000 }
         }
 
         test { client ->
@@ -222,7 +222,7 @@ class HttpTimeoutTest : ClientLoader() {
 
                 setExtension(
                     HttpTimeout.HttpTimeoutExtension.key,
-                    HttpTimeout.HttpTimeoutExtension(requestTimeout = 1000)
+                    HttpTimeout.HttpTimeoutExtension(requestTimeoutMillis = 1000)
                 )
             }
             assertFailsWithRootCause<HttpRequestTimeoutException> {
@@ -234,7 +234,7 @@ class HttpTimeoutTest : ClientLoader() {
     @Test
     fun testGetStream() = clientTests {
         config {
-            install(HttpTimeout) { requestTimeout = 500 }
+            install(HttpTimeout) { requestTimeoutMillis = 500 }
         }
 
         test { client ->
@@ -258,7 +258,7 @@ class HttpTimeoutTest : ClientLoader() {
 
                 setExtension(
                     HttpTimeout.HttpTimeoutExtension.key,
-                    HttpTimeout.HttpTimeoutExtension(requestTimeout = 500)
+                    HttpTimeout.HttpTimeoutExtension(requestTimeoutMillis = 500)
                 )
             }
 
@@ -269,7 +269,7 @@ class HttpTimeoutTest : ClientLoader() {
     @Test
     fun testGetStreamRequestTimeout() = clientTests {
         config {
-            install(HttpTimeout) { requestTimeout = 500 }
+            install(HttpTimeout) { requestTimeoutMillis = 500 }
         }
 
         test { client ->
@@ -294,7 +294,7 @@ class HttpTimeoutTest : ClientLoader() {
 
                     setExtension(
                         HttpTimeout.HttpTimeoutExtension.key,
-                        HttpTimeout.HttpTimeoutExtension(requestTimeout = 500)
+                        HttpTimeout.HttpTimeoutExtension(requestTimeoutMillis = 500)
                     )
                 }
             }
@@ -304,7 +304,7 @@ class HttpTimeoutTest : ClientLoader() {
     @Test
     fun testRedirect() = clientTests {
         config {
-            install(HttpTimeout) { requestTimeout = 500 }
+            install(HttpTimeout) { requestTimeoutMillis = 500 }
         }
 
         test { client ->
@@ -330,7 +330,7 @@ class HttpTimeoutTest : ClientLoader() {
 
                 setExtension(
                     HttpTimeout.HttpTimeoutExtension.key,
-                    HttpTimeout.HttpTimeoutExtension(requestTimeout = 500)
+                    HttpTimeout.HttpTimeoutExtension(requestTimeoutMillis = 500)
                 )
             }
             assertEquals("Text", response)
@@ -340,7 +340,7 @@ class HttpTimeoutTest : ClientLoader() {
     @Test
     fun testRedirectRequestTimeoutOnFirstStep() = clientTests {
         config {
-            install(HttpTimeout) { requestTimeout = 10 }
+            install(HttpTimeout) { requestTimeoutMillis = 10 }
         }
 
         test { client ->
@@ -367,7 +367,7 @@ class HttpTimeoutTest : ClientLoader() {
 
                     setExtension(
                         HttpTimeout.HttpTimeoutExtension.key,
-                        HttpTimeout.HttpTimeoutExtension(requestTimeout = 10)
+                        HttpTimeout.HttpTimeoutExtension(requestTimeoutMillis = 10)
                     )
                 }
             }
@@ -377,7 +377,7 @@ class HttpTimeoutTest : ClientLoader() {
     @Test
     fun testRedirectRequestTimeoutOnSecondStep() = clientTests {
         config {
-            install(HttpTimeout) { requestTimeout = 200 }
+            install(HttpTimeout) { requestTimeoutMillis = 200 }
         }
 
         test { client ->
@@ -404,7 +404,7 @@ class HttpTimeoutTest : ClientLoader() {
 
                     setExtension(
                         HttpTimeout.HttpTimeoutExtension.key,
-                        HttpTimeout.HttpTimeoutExtension(requestTimeout = 200)
+                        HttpTimeout.HttpTimeoutExtension(requestTimeoutMillis = 200)
                     )
                 }
             }
@@ -414,7 +414,7 @@ class HttpTimeoutTest : ClientLoader() {
     @Test
     fun testConnectTimeout() = clientTests(listOf("Js", "Ios")) {
         config {
-            install(HttpTimeout) { connectTimeout = 1000 }
+            install(HttpTimeout) { connectTimeoutMillis = 1000 }
         }
 
         test { client ->
@@ -435,7 +435,7 @@ class HttpTimeoutTest : ClientLoader() {
                 client.get<String>("http://www.google.com:81") {
                     setExtension(
                         HttpTimeout.HttpTimeoutExtension.key,
-                        HttpTimeout.HttpTimeoutExtension(connectTimeout = 1000)
+                        HttpTimeout.HttpTimeoutExtension(connectTimeoutMillis = 1000)
                     )
                 }
             }
@@ -445,7 +445,7 @@ class HttpTimeoutTest : ClientLoader() {
     @Test
     fun testSocketTimeoutRead() = clientTests(listOf("Js", "Curl")) {
         config {
-            install(HttpTimeout) { socketTimeout = 1000 }
+            install(HttpTimeout) { socketTimeoutMillis = 1000 }
         }
 
         test { client ->
@@ -470,7 +470,7 @@ class HttpTimeoutTest : ClientLoader() {
 
                     setExtension(
                         HttpTimeout.HttpTimeoutExtension.key,
-                        HttpTimeout.HttpTimeoutExtension(socketTimeout = 1000)
+                        HttpTimeout.HttpTimeoutExtension(socketTimeoutMillis = 1000)
                     )
                 }
             }
@@ -480,7 +480,7 @@ class HttpTimeoutTest : ClientLoader() {
     @Test
     fun testSocketTimeoutWriteFailOnWrite() = clientTests(listOf("Js", "Curl", "Android")) {
         config {
-            install(HttpTimeout) { socketTimeout = 500 }
+            install(HttpTimeout) { socketTimeoutMillis = 500 }
         }
 
         test { client ->
@@ -502,7 +502,7 @@ class HttpTimeoutTest : ClientLoader() {
                     body = makeString(4 * 1024 * 1024)
                     setExtension(
                         HttpTimeout.HttpTimeoutExtension.key,
-                        HttpTimeout.HttpTimeoutExtension(socketTimeout = 500)
+                        HttpTimeout.HttpTimeoutExtension(socketTimeoutMillis = 500)
                     )
                 }
             }
