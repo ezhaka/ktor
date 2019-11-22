@@ -23,23 +23,29 @@ class HttpTimeout(
     /**
      * [HttpTimeout] extension configuration that is used during installation.
      */
-    class HttpTimeoutExtension(
-        requestTimeoutMillis: Long? = null,
-        connectTimeoutMillis: Long? = null,
-        socketTimeoutMillis: Long? = null
-    ) {
+    class HttpTimeoutExtension {
 
-        var requestTimeoutMillis: Long? = requestTimeoutMillis
+        constructor(
+            requestTimeoutMillis: Long? = null,
+            connectTimeoutMillis: Long? = null,
+            socketTimeoutMillis: Long? = null
+        ) {
+            this.requestTimeoutMillis = requestTimeoutMillis
+            this.connectTimeoutMillis = connectTimeoutMillis
+            this.socketTimeoutMillis = socketTimeoutMillis
+        }
+
+        var requestTimeoutMillis: Long?
             set(value) {
                 field = checkTimeoutValue(value)
             }
 
-        var connectTimeoutMillis: Long? = connectTimeoutMillis
+        var connectTimeoutMillis: Long?
             set(value) {
                 field = checkTimeoutValue(value)
             }
 
-        var socketTimeoutMillis: Long? = socketTimeoutMillis
+        var socketTimeoutMillis: Long?
             set(value) {
                 field = checkTimeoutValue(value)
             }
