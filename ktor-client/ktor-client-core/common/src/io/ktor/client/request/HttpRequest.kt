@@ -132,16 +132,24 @@ class HttpRequestBuilder : HttpMessageBuilder {
     }
 
     /**
-     * Retrieve extension by it's type.
+     * Set capability configuration.
      */
     @KtorExperimentalAPI
-    fun <T : Any> setCapability(key: EngineCapability<T>, extension: T) {
-        val capabilities = attributes.computeIfAbsent(engineCapabilitiesKey) { mutableMapOf() }
-        capabilities[key] = extension
+    fun <T : Any> configurePerRequest(key: EngineCapability<T>, block: T.() -> Unit) {
+        setCapability(key, key.createEmptyConfiguration().also(block))
     }
 
     /**
-     * Add extension to the request.
+     * Set capability configuration.
+     */
+    @KtorExperimentalAPI
+    fun <T : Any> setCapability(key: EngineCapability<T>, capability: T) {
+        val capabilities = attributes.computeIfAbsent(engineCapabilitiesKey) { mutableMapOf() }
+        capabilities[key] = capability
+    }
+
+    /**
+     * Retrieve capability by key.
      */
     @KtorExperimentalAPI
     fun <T : Any> getCapabilityOrNull(key: EngineCapability<T>): T? {

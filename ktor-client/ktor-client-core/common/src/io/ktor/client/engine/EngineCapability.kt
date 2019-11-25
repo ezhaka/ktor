@@ -14,4 +14,7 @@ val engineCapabilitiesKey = AttributeKey<MutableMap<EngineCapability<*>, Any>>("
 @SharedImmutable
 val defaultCapabilities = setOf(HttpTimeout)
 
-interface EngineCapability<T>
+interface EngineCapability<T> {
+
+    fun createEmptyConfiguration(): T
+}
