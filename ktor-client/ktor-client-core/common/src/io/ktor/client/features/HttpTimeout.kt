@@ -65,7 +65,7 @@ class HttpTimeout(
         internal fun build(): HttpTimeout = HttpTimeout(requestTimeoutMillis, connectTimeoutMillis, socketTimeoutMillis)
 
         private fun checkTimeoutValue(value: Long?): Long? {
-            check(value == null || value > 0) {
+            require(value == null || value > 0) {
                 "Only positive timeout values are allowed, for infinite timeout use INFINITE_TIMEOUT_MS"
             }
             return value

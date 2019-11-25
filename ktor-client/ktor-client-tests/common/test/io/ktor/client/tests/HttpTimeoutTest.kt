@@ -488,37 +488,48 @@ class HttpTimeoutTest : ClientLoader() {
 
     @Test
     fun testNonPositiveTimeout() {
-        assertFailsWith<IllegalStateException> {
+        assertFailsWith<IllegalArgumentException> {
             HttpTimeout.HttpTimeoutCapabilityConfiguration(
                 requestTimeoutMillis = -1
             )
         }
-        assertFailsWith<IllegalStateException> {
+        assertFailsWith<IllegalArgumentException> {
             HttpTimeout.HttpTimeoutCapabilityConfiguration(
                 requestTimeoutMillis = 0
             )
         }
 
-        assertFailsWith<IllegalStateException> {
+        assertFailsWith<IllegalArgumentException> {
             HttpTimeout.HttpTimeoutCapabilityConfiguration(
                 socketTimeoutMillis = -1
             )
         }
-        assertFailsWith<IllegalStateException> {
+        assertFailsWith<IllegalArgumentException> {
             HttpTimeout.HttpTimeoutCapabilityConfiguration(
                 socketTimeoutMillis = 0
             )
         }
 
-        assertFailsWith<IllegalStateException> {
+        assertFailsWith<IllegalArgumentException> {
             HttpTimeout.HttpTimeoutCapabilityConfiguration(
                 connectTimeoutMillis = -1
             )
         }
-        assertFailsWith<IllegalStateException> {
+        assertFailsWith<IllegalArgumentException> {
             HttpTimeout.HttpTimeoutCapabilityConfiguration(
                 connectTimeoutMillis = 0
             )
+        }
+    }
+
+    @Test
+    fun testNotInstalledFeatures() = clientTests {
+        test { client ->
+            assertFailsWith<IllegalArgumentException> {
+                client.get<String>("https://www.google.com") {
+                    configurePerRequest(HttpTimeout) { requestTimeoutMillis = 1000 }
+                }
+            }
         }
     }
 }
