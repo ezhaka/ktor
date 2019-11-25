@@ -163,7 +163,7 @@ public abstract interface class io/ktor/client/engine/HttpClientEngine : java/io
 	public abstract fun execute (Lio/ktor/client/request/HttpRequestData;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public abstract fun getConfig ()Lio/ktor/client/engine/HttpClientEngineConfig;
 	public abstract fun getDispatcher ()Lkotlinx/coroutines/CoroutineDispatcher;
-	public abstract fun getSupportedExtensions ()Ljava/util/Set;
+	public abstract fun getSupportedCapabilities ()Ljava/util/Set;
 	public abstract fun install (Lio/ktor/client/HttpClient;)V
 }
 
