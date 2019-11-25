@@ -66,7 +66,7 @@ class HttpClient(
     override val coroutineContext: CoroutineContext get() = engine.coroutineContext
 
     /**
-     * Pipeline used for processing all the (request)s sent by this client.
+     * Pipeline used for processing all the requests sent by this client.
      */
     val requestPipeline: HttpRequestPipeline = HttpRequestPipeline()
 
