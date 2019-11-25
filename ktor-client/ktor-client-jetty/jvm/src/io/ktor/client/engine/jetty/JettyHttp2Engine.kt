@@ -21,7 +21,7 @@ private const val CLIENT_CACHE_SIZE = 10
 internal class JettyHttp2Engine(override val config: JettyEngineConfig) : HttpClientEngineBase("ktor-jetty") {
 
     override val dispatcher: CoroutineDispatcher by lazy {
-        Dispatchers.fixedThreadPoolDispatcher
+        Dispatchers.fixedThreadPoolDispatcher(
             config.threadsCount,
             "ktor-jetty-thread-%d"
         )
