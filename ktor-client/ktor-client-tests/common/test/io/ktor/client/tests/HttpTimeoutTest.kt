@@ -144,9 +144,7 @@ class HttpTimeoutTest : ClientLoader() {
                 client.get<String>("$TEST_URL/with-delay") {
                     parameter("delay", 5000)
 
-                    configurePerRequest(HttpTimeout) {
-                        requestTimeoutMillis = 10
-                    }
+                    configurePerRequest(HttpTimeout) { requestTimeoutMillis = 10 }
                 }
             }
         }
@@ -180,11 +178,7 @@ class HttpTimeoutTest : ClientLoader() {
                 method = HttpMethod.Get
                 parameter("delay", 10)
 
-                configurePerRequest(
-                    HttpTimeout
-                ) {
-                    requestTimeoutMillis = 500
-                }
+                configurePerRequest(HttpTimeout) { requestTimeoutMillis = 500 }
             }
             val result: String = response.receive()
 
@@ -220,11 +214,7 @@ class HttpTimeoutTest : ClientLoader() {
                 method = HttpMethod.Get
                 parameter("delay", 500)
 
-                configurePerRequest(
-                    HttpTimeout
-                ) {
-                    requestTimeoutMillis = 1000
-                }
+                configurePerRequest(HttpTimeout) { requestTimeoutMillis = 1000 }
             }
             assertFailsWithRootCause<HttpRequestTimeoutException> {
                 response.readUTF8Line()
