@@ -27,7 +27,7 @@ internal class JettyHttp2Engine(override val config: JettyEngineConfig) : HttpCl
         )
     }
 
-    override val supportedExtensions = setOf(HttpTimeout)
+    override val supportedCapabilities = setOf(HttpTimeout)
 
     /**
      * Cache that keeps least recently used [HTTP2Client] instances.
