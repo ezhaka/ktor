@@ -156,7 +156,7 @@ class HttpClient(
      * Check if the specified [capability] is supported by this client.
      */
     fun isSupported(capability: HttpClientEngineCapability<Any>): Boolean {
-        return engine.supportedExtensions.contains(capability)
+        return engine.supportedCapabilities.contains(capability)
     }
 
     /**
