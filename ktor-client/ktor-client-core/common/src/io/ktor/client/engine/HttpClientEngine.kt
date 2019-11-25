@@ -35,7 +35,7 @@ interface HttpClientEngine : CoroutineScope, Closeable {
      * Set of supported engine extensions.
      */
     @KtorExperimentalAPI
-    val supportedExtensions: Set<EngineCapability<*>>
+    val supportedExtensions: Set<HttpClientEngineCapability<*>>
 
     private val closed: Boolean
         get() = !(coroutineContext[Job]?.isActive ?: false)

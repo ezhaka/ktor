@@ -87,7 +87,7 @@ class HttpTimeout(
      * Companion object for feature installation.
      */
     companion object Feature : HttpClientFeature<HttpTimeoutCapabilityConfiguration, HttpTimeout>,
-        EngineCapability<HttpTimeoutCapabilityConfiguration> {
+        HttpClientEngineCapability<HttpTimeoutCapabilityConfiguration> {
 
         override val key: AttributeKey<HttpTimeout> = AttributeKey("TimeoutFeature")
 

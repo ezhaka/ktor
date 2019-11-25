@@ -135,7 +135,7 @@ class HttpRequestBuilder : HttpMessageBuilder {
      * Set capability configuration.
      */
     @KtorExperimentalAPI
-    fun <T : Any> configurePerRequest(key: EngineCapability<T>, block: T.() -> Unit) {
+    fun <T : Any> configurePerRequest(key: HttpClientEngineCapability<T>, block: T.() -> Unit) {
         setCapability(key, key.createEmptyConfiguration().also(block))
     }
 
@@ -143,7 +143,7 @@ class HttpRequestBuilder : HttpMessageBuilder {
      * Set capability configuration.
      */
     @KtorExperimentalAPI
-    fun <T : Any> setCapability(key: EngineCapability<T>, capability: T) {
+    fun <T : Any> setCapability(key: HttpClientEngineCapability<T>, capability: T) {
         val capabilities = attributes.computeIfAbsent(engineCapabilitiesKey) { mutableMapOf() }
         capabilities[key] = capability
     }
@@ -152,7 +152,7 @@ class HttpRequestBuilder : HttpMessageBuilder {
      * Retrieve capability by key.
      */
     @KtorExperimentalAPI
-    fun <T : Any> getCapabilityOrNull(key: EngineCapability<T>): T? {
+    fun <T : Any> getCapabilityOrNull(key: HttpClientEngineCapability<T>): T? {
         @Suppress("UNCHECKED_CAST")
         return attributes.getOrNull(engineCapabilitiesKey)?.get(key) as T?
     }
@@ -176,7 +176,7 @@ class HttpRequestData internal constructor(
      * Retrieve extension by it's type.
      */
     @KtorExperimentalAPI
-    fun <T> getCapabilityOrNull(key: EngineCapability<T>): T? {
+    fun <T> getCapabilityOrNull(key: HttpClientEngineCapability<T>): T? {
         @Suppress("UNCHECKED_CAST")
         return attributes.getOrNull(engineCapabilitiesKey)?.get(key) as T?
     }
@@ -184,7 +184,7 @@ class HttpRequestData internal constructor(
     /**
      * Retrieve all extension keys associated with this request.
      */
-    internal fun getRequiredCapabilities(): Set<EngineCapability<*>> =
+    internal fun getRequiredCapabilities(): Set<HttpClientEngineCapability<*>> =
         attributes.getOrNull(engineCapabilitiesKey)?.keys ?: emptySet()
 
     override fun toString(): String = "HttpRequestData(url=$url, method=$method)"
