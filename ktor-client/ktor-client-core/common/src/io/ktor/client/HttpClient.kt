@@ -43,7 +43,7 @@ fun <T : HttpClientEngineConfig> HttpClient(
 
 /**
  * Constructs an asynchronous [HttpClient] using the specified [engine]
- * and a [block] for configuring this client.
+ * and a [block] for configuring this clFient.
  */
 @HttpClientDsl
 fun HttpClient(
