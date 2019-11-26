@@ -51,9 +51,9 @@ class CacheTest {
 
         (1..100).map {
             thread {
-                val random = Random()
+                val random = Random(it * 43L)
                 repeat(1000) {
-                    val key = it * 1000 + random.nextInt(1000)
+                    val key = random.nextInt(1000)
                     assertEquals(key, cache[key])
                 }
             }
